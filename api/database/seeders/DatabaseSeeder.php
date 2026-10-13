@@ -34,5 +34,7 @@ class DatabaseSeeder extends Seeder
             $post->updated_at = $createdAt;
             $post->save();
         }
+
+        $this->call(LikeSeeder::class);
     }
 }

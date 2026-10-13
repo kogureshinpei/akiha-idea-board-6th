@@ -71,7 +71,7 @@ API を呼ぶたびに **`X-User-Id` ヘッダー** で送られます。Laravel
 - `X-User-Id` なし … 読み取り（GET）だけできる。書き込みは `401`
 - `X-User-Id` が存在しないユーザー … `401`
 
-## API の取り決め（main 時点）
+## API の取り決め
 
 レスポンスは API Resource で整形しており、本体は `data` の中に入ります。
 
@@ -82,12 +82,19 @@ API を呼ぶたびに **`X-User-Id` ヘッダー** で送られます。Laravel
 | GET | `/api/posts` | ― | `200 {"data":[Post,…]}`（新着順） | |
 | GET | `/api/posts/{id}` | ― | `200 {"data":Post}` | `404` |
 | POST | `/api/posts` | `X-User-Id` ＋ `{"title":"…","body":"…"}` | `201 {"data":Post}` | `401` / `422 {"message":"…","errors":{"title":["…"]}}` |
+| POST | `/api/posts/{id}/like` | `X-User-Id` | `200 {"data":{"post_id":4,"likes_count":3,"liked_by_me":true}}`（いいね済みでも 200・重複しない） | `401` / `404` |
+| DELETE | `/api/posts/{id}/like` | `X-User-Id` | `200 {"data":{"post_id":4,"likes_count":2,"liked_by_me":false}}`（自分のいいねだけ消える） | `401` / `404` |
+
+> いいね（`/like`）は `answer/like` 以降のブランチにあります。
 
 ```json
 // Post
 { "id": 4, "title": "授業の質問を匿名で集めるボード", "body": "…",
-  "user": { "id": 2, "name": "佐藤" }, "created_at": "2026-10-12T21:40:00+09:00" }
+  "user": { "id": 2, "name": "佐藤" }, "created_at": "2026-10-12T21:40:00+09:00",
+  "likes_count": 3, "liked_by_me": true }   // ← likes_count / liked_by_me は answer/like 以降
 ```
+
+気づきワークの解説（`review/like-naive` の問題点と直し方）は [`docs/review-answer.md`](docs/review-answer.md) にあります。
 
 ## フォルダ構成
 

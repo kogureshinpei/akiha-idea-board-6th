@@ -26,6 +26,11 @@ export default function PostListPage() {
     }
   }, [currentUserId, reloadKey])
 
+  // 1件分だけ書き換える（いいねボタンから呼ばれる）
+  const updatePost = (id, patch) => {
+    setPosts((list) => list.map((p) => (p.id === id ? { ...p, ...patch } : p)))
+  }
+
   const retry = () => {
     setError(null)
     setPosts(null)
@@ -45,7 +50,7 @@ export default function PostListPage() {
       {error && <ErrorMessage error={error} onRetry={retry} />}
       {!error && posts === null && <Loading />}
       {!error && posts?.length === 0 && <Empty>まだ投稿がありません。最初のアイデアを投稿してみましょう。</Empty>}
-      {!error && posts?.map((post) => <PostCard key={post.id} post={post} />)}
+      {!error && posts?.map((post) => <PostCard key={post.id} post={post} onChange={(patch) => updatePost(post.id, patch)} />)}
     </main>
   )
 }

@@ -78,7 +78,9 @@ input, textarea { width: 100%; }
 .btn--primary { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
 .btn--primary:hover { background: var(--accent-hover); color: #FFFFFF; }
 
-/* いいねボタン（受講生が使う用に用意） */
+/* いいねボタン */
+.like { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.like-error { font-size: 13px; color: var(--danger); }
 .like-btn {
   display: inline-flex;
   align-items: center;

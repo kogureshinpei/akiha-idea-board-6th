@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { fetchPost } from '../api/posts.js'
 import BackLink from '../components/BackLink.jsx'
+import LikeButton from '../components/LikeButton.jsx'
 import { ErrorMessage, Loading } from '../components/Status.jsx'
 import { useCurrentUser } from '../hooks/useCurrentUser.js'
 import { formatDate } from '../lib/formatDate.js'
@@ -44,6 +45,10 @@ export default function PostDetailPage() {
           <h1 className="card__title">{post.title}</h1>
           <span className="meta">{post.user.name}・{formatDate(post.created_at)}</span>
           <p className="card__body">{post.body}</p>
+          <div className="card__actions">
+            <LikeButton post={post} onChange={(patch) => setPost((p) => ({ ...p, ...patch }))} />
+            {post.liked_by_me && <span className="meta">あなたがいいねしています</span>}
+          </div>
         </article>
       )}
     </main>
