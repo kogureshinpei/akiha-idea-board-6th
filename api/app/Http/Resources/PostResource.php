@@ -19,6 +19,9 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'body' => $this->body,
             'user' => new UserResource($this->whenLoaded('user')),
+            'likes_count' => $this->likes_count ?? 0,
+            'liked_by_me' => (bool) $this->liked_by_me,
+            'my_like_id' => $this->my_like_id,
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
