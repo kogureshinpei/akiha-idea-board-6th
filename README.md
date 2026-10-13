@@ -85,14 +85,37 @@ API を呼ぶたびに **`X-User-Id` ヘッダー** で送られます。Laravel
 | POST | `/api/posts/{id}/like` | `X-User-Id` | `200 {"data":{"post_id":4,"likes_count":3,"liked_by_me":true}}`（いいね済みでも 200・重複しない） | `401` / `404` |
 | DELETE | `/api/posts/{id}/like` | `X-User-Id` | `200 {"data":{"post_id":4,"likes_count":2,"liked_by_me":false}}`（自分のいいねだけ消える） | `401` / `404` |
 
-> いいね（`/like`）は `answer/like` 以降のブランチにあります。
+| GET | `/api/posts/{id}/comments` | ― | `200 {"data":[Comment,…]}`（古い順） | `404` |
+| POST | `/api/posts/{id}/comments` | `X-User-Id` ＋ `{"body":"…"}` | `201 {"data":Comment}` | `401` / `404` / `422` |
+| DELETE | `/api/comments/{id}` | `X-User-Id` | `204`（本文なし） | `401` / `403`（本人以外）/ `404` |
+
+> いいね（`/like`）は `answer/like` 以降、コメント（`/comments`）は `answer/comment` にあります。
 
 ```json
 // Post
 { "id": 4, "title": "授業の質問を匿名で集めるボード", "body": "…",
   "user": { "id": 2, "name": "佐藤" }, "created_at": "2026-10-12T21:40:00+09:00",
-  "likes_count": 3, "liked_by_me": true }   // ← likes_count / liked_by_me は answer/like 以降
+  "likes_count": 3, "liked_by_me": true,    // ← answer/like 以降
+  "comments_count": 3 }                     // ← answer/comment
+
+// Comment
+{ "id": 1, "post_id": 4, "body": "先生側の画面もあるといいかも。…",
+  "user": { "id": 3, "name": "鈴木" }, "created_at": "2026-10-12T22:03:00+09:00" }
 ```
+
+### コメント機能の決めごと（answer/comment）
+
+| 項目 | 決めたこと | どこで実装しているか |
+|---|---|---|
+| 一覧の順番 | 古い順（会話の流れで読めるように） | `CommentController@index` |
+| 入力チェック | 必須・500 文字以内 | `StoreCommentRequest` |
+| 削除できる人 | 書いた本人だけ。他人は `403` | `CommentPolicy@delete` ＋ `Gate::authorize()` |
+| **投稿が削除されたら** | **その投稿のコメントも一緒に削除する** | migration の `foreignId('post_id')->constrained()->cascadeOnDelete()` |
+| ユーザーが削除されたら | そのユーザーのコメントも削除する | migration の `foreignId('user_id')->…->cascadeOnDelete()` |
+| 一覧のコメント数 | `comments_count` を `withCount` で 1 回の SQL で取得 | `PostController@index` |
+| 画面 | 読み込み中・エラー・0 件の表示／入力エラーを欄の下に表示／送信中はボタンを無効化して二重送信を防ぐ／自分のコメントにだけ削除ボタン（確認ダイアログあり） | `web/src/components/CommentSection.jsx` |
+
+> 投稿の削除機能はまだありませんが、作ったときにコメントが「親のいない」状態で残らないよう、先に DB で決めています。
 
 気づきワークの解説（`review/like-naive` の問題点と直し方）は [`docs/review-answer.md`](docs/review-answer.md) にあります。
 

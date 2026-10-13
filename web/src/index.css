@@ -188,3 +188,43 @@ textarea { resize: vertical; padding: 12px 14px; }
 .health__detail { color: var(--muted); }
 .health .ok { color: #1A7F37; font-weight: 700; }
 .health .ng { color: var(--danger); font-weight: 700; }
+
+/* コメント */
+.comment-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: #4A515C;
+  font-size: 15px;
+  text-decoration: none;
+}
+.comments { display: flex; flex-direction: column; gap: 12px; }
+.comments h2 { margin: 8px 0 0; font-size: 19px; font-weight: 700; }
+.comment {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.comment__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 24px; }
+.comment__body { margin: 0; white-space: pre-wrap; }
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin: -10px -12px -10px 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.icon-btn:hover { background: var(--bg); color: var(--danger); }
+.form--comment { padding: 20px; gap: 12px; }

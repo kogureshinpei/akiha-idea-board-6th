@@ -35,6 +35,6 @@ class DatabaseSeeder extends Seeder
             $post->save();
         }
 
-        $this->call(LikeSeeder::class);
+        $this->call([LikeSeeder::class, CommentSeeder::class]);
     }
 }

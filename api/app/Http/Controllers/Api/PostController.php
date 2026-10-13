@@ -15,6 +15,7 @@ class PostController extends Controller
     {
         $posts = Post::with('user')   // 投稿者をまとめて取得（N+1 を避ける）
             ->withLikeInfo($request->user())
+            ->withCount('comments')
             ->latest()
             ->latest('id')
             ->get();
@@ -27,7 +28,7 @@ class PostController extends Controller
     {
         $post = $request->user()->posts()->create($request->validated());
 
-        return (new PostResource($post->load('user')->loadLikeInfo($request->user())))
+        return (new PostResource($post->load('user')->loadLikeInfo($request->user())->loadCount('comments')))
             ->response()
             ->setStatusCode(201);
     }
@@ -35,6 +36,6 @@ class PostController extends Controller
     // GET /api/posts/{post} … 1件取得（存在しない ID なら自動で 404）
     public function show(Request $request, Post $post)
     {
-        return new PostResource($post->load('user')->loadLikeInfo($request->user()));
+        return new PostResource($post->load('user')->loadLikeInfo($request->user())->loadCount('comments'));
     }
 }

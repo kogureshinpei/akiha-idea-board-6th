@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { fetchPost } from '../api/posts.js'
 import BackLink from '../components/BackLink.jsx'
+import CommentSection from '../components/CommentSection.jsx'
 import LikeButton from '../components/LikeButton.jsx'
 import { ErrorMessage, Loading } from '../components/Status.jsx'
 import { useCurrentUser } from '../hooks/useCurrentUser.js'
@@ -51,6 +52,7 @@ export default function PostDetailPage() {
           </div>
         </article>
       )}
+      {!error && post && <CommentSection postId={post.id} />}
     </main>
   )
 }
