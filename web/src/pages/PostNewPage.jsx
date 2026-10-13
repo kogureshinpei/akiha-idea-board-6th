@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { createPost } from '../api/posts.js'
 import BackLink from '../components/BackLink.jsx'
@@ -11,11 +11,13 @@ export default function PostNewPage() {
   const [body, setBody] = useState('')
   const [errors, setErrors] = useState({}) // { title: ['…'], body: ['…'] }（API の 422 の形そのまま）
   const [message, setMessage] = useState('')
-  const [submitting, setSubmitting] = useState(false)
+  const submittingRef = useRef(false) // 送信中か（ref は即座に変わるので、素早い連打でも確実に止められる）
+  const [submitting, setSubmitting] = useState(false) // 画面表示用
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (submitting) return // 二重送信を防ぐ
+    if (submittingRef.current) return // 二重送信を防ぐ
+    submittingRef.current = true
     setSubmitting(true)
     setErrors({})
     setMessage('')
@@ -28,6 +30,7 @@ export default function PostNewPage() {
       } else {
         setMessage(err.message)
       }
+      submittingRef.current = false
       setSubmitting(false)
     }
   }
